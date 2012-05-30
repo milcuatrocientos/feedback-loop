@@ -10,19 +10,26 @@
         var canvasWidth = 800, canvasHeight = 500;
         var factor = 0.8, duration = 2e3, items = 5;
         var maxWidth = factor*Math.min(canvasWidth, canvasHeight)/2;
-        var animationProps = {x: canvasWidth/2, y: canvasHeight/2, r: 0, 'stroke-width': 1};
+        var animationProps = {x: canvasWidth/2, y: canvasHeight/2, r: 0, "stroke-width": 1};
 
         var paper = Raphael("canvas", canvasWidth, canvasHeight);
-        var staticCircle = paper.circle(canvasWidth/2, canvasHeight/2, maxWidth).attr('stroke-width', 2);
+        var staticCircle = paper.circle(canvasWidth/2, canvasHeight/2, maxWidth).attr("stroke-width", 2);
 
         var intervalId = window.setInterval(function() {
           var circle = staticCircle.clone();
-          circle.animate(animationProps, duration, 'ease-in', function() { circle.remove();});
+          circle.animate(animationProps, duration, "ease-in", function() { circle.remove(); });
         }, duration/items);
+
+        document.getElementById("stop").onclick = function(e) {
+          window.clearInterval(intervalId);
+        };
       };
     </script>
   </head>
   <body>
-    <div id="canvas" style="width: 800px; margin: auto;"></div>
+    <div id="canvas" style="text-align: center;" />
+    <div>
+      <button id="stop">stop</button>
+    </div>
   </body>
 </html>

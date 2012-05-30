@@ -19,12 +19,19 @@
           var x = Math.random()*(canvasWidth-2*radius)+radius,
               y = Math.random()*(canvasHeight-2*radius)+radius;
           var circle = paper.circle(x, y, radius).attr({stroke: color, fill: color});
-          circle.animate({opacity: 0}, duration, 'linear', function() { circle.destroy(); });
+          circle.animate({opacity: 0}, duration, "linear", function() { circle.destroy(); });
         }, interval);
+
+        document.getElementById("stop").onclick = function(e) {
+          window.clearInterval(intervalId);
+        };
       };
     </script>
   </head>
   <body>
     <div id="canvas" style="text-align: center;" />
+    <div>
+      <button id="stop">stop</button>
+    </div>
   </body>
 </html>
