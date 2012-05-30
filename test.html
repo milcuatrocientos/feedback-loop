@@ -6,27 +6,19 @@
     <title>Raphaël test</title>
     <script src="raphael-min.js"></script>
     <script>
-      function trail() {
-        for (var i=1; i<items; i++) {
-          paper.circle(canvasWidth/2, canvasHeight/2, factor*Math.min(canvasWidth, canvasHeight)/2)
-               .attr('stroke-width', 2)
-               .animateWith(circle, animationcb, animation.delay(duration/items*i));
-        };
-      };
-
       window.onload = function () {
-        canvasWidth = 800, canvasHeight = 500, factor = 0.8, duration = 2e3, items = 5;
+        var canvasWidth = 800, canvasHeight = 500;
+        var factor = 0.8, duration = 2e3, items = 5;
+        var maxWidth = factor*Math.min(canvasWidth, canvasHeight)/2;
+        var animationProps = {x: canvasWidth/2, y: canvasHeight/2, r: 0, 'stroke-width': 1};
 
-        paper = Raphael("canvas", canvasWidth, canvasHeight);
-        paper.circle(canvasWidth/2, canvasHeight/2, factor*Math.min(canvasWidth, canvasHeight)/2)
-             .attr('stroke-width', 2);
+        var paper = Raphael("canvas", canvasWidth, canvasHeight);
+        var staticCircle = paper.circle(canvasWidth/2, canvasHeight/2, maxWidth).attr('stroke-width', 2);
 
-        animation = Raphael.animation({x: canvasWidth/2, y: canvasHeight/2, r: 0, 'stroke-width': 1}, duration, 'ease-in');
-        animationcb = Raphael.animation({x: canvasWidth/2, y: canvasHeight/2, r: 0, 'stroke-width': 1}, duration, 'ease-in', trail);
-        circle = paper.circle(canvasWidth/2, canvasHeight/2, factor*Math.min(canvasWidth, canvasHeight)/2)
-                      .attr('stroke-width', 2)
-                      .animate(animationcb.repeat(Infinity));
-        trail();
+        var intervalId = window.setInterval(function() {
+          var circle = staticCircle.clone();
+          circle.animate(animationProps, duration, 'ease-in', function() { circle.remove();});
+        }, duration/items);
       };
     </script>
   </head>
