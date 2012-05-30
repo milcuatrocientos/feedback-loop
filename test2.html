@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta charset="utf-8">
+    <title>Raphaël test</title>
+    <script type="text/javascript" src="raphael-min.js"></script>
+    <script>
+      window.onload = function () {
+        var canvasWidth = 800, canvasHeight = 500;
+        var maxRadius = Math.min(canvasWidth, canvasHeight)/10,
+            interval = 1e2, duration = 5e2;
+
+        var paper = Raphael("canvas", canvasWidth, canvasHeight);
+
+        var intervalId = window.setInterval(function() {
+          var radius = Math.random()*maxRadius,
+              color = Raphael.rgb(Math.random()*255, Math.random()*255, Math.random()*255);
+          var x = Math.random()*(canvasWidth-2*radius)+radius,
+              y = Math.random()*(canvasHeight-2*radius)+radius;
+          var circle = paper.circle(x, y, radius).attr({stroke: color, fill: color});
+          circle.animate({opacity: 0}, duration, 'linear', function() { circle.destroy(); });
+        }, interval);
+      };
+    </script>
+  </head>
+  <body>
+    <div id="canvas" style="text-align: center;" />
+  </body>
+</html>
