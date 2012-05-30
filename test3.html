@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta charset="utf-8">
+    <title>Raphaël test</title>
+    <script src="raphael-min.js"></script>
+    <script>
+      function unparsePathString(pathArray) {
+        return pathArray.map(function(e) {
+          return e[0] + e.slice(1).join();
+        }).join('');
+      };
+
+      window.onload = function() {
+        var canvasWidth = 800, canvasHeight = 500;
+        var paper = Raphael("canvas", canvasWidth, canvasHeight);
+        paper.circle(canvasWidth/2, canvasHeight/2, Math.min(canvasWidth, canvasHeight)/2);
+
+        var pathArray = [['M', canvasWidth/2, canvasHeight/2]];
+        for (var t=0, a=1; t<Math.min(canvasWidth, canvasHeight)/2; t++)
+          pathArray.push(['L', canvasWidth/2 + a*t*Math.cos(t), canvasHeight/2 + a*t*Math.sin(t)]);
+
+        var path = paper.path(unparsePathString(pathArray));
+      };
+    </script>
+  </head>
+  <body>
+    <div id="canvas" style="text-align: center;" />
+  </body>
+</html>
