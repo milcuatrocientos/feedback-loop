@@ -4,32 +4,77 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta charset="utf-8">
     <title>Raphaël test</title>
+    <script type="text/javascript" src="jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="raphael-min.js"></script>
     <script>
-      window.onload = function () {
-        var canvasWidth = 800, canvasHeight = 500;
-        var maxRadius = Math.min(canvasWidth, canvasHeight)/10,
-            interval = 1e2, duration = 5e2;
+      function Coord(x, y) {
+        this.to_polar = function() {
+          return new Polar(
+            Math.sqrt(this.x*this.x + this.y*this.y),
+            Math.atan(this.y / this.x)
+          );
+        };
 
-        var paper = Raphael("canvas", canvasWidth, canvasHeight);
+        this.x = x, this.y = y;
+      };
+
+      function Polar(r, a, normalize) {
+        this.to_coord = function() {
+          return new Coord(
+            this.r * Math.cos(this.a),
+            this.r * Math.sin(this.a)
+          );
+        };
+
+        this.normalize = function() {
+          this.a %= 2*Math.PI;
+        };
+
+        this.r = r, this.a = a;
+        if (normalize)
+          this.normalize()
+      };
+
+
+      window.onload = function () {
+        var canvasW = 800, canvasH = 500;
+        var maxDistance = Math.min(canvasW, canvasH) / 5;
+        var maxRadius = Math.min(canvasW, canvasH) / 10;
+        var interval = 0.1, duration = 0.5;
+
+        var paper = Raphael('canvas-container', canvasW, canvasH);
+        var mousePos = new Coord(canvasW/2, canvasH/2);
+
+        var $canvas = $(paper.canvas);
+        $canvas.css('border', '1px solid black');
+        $canvas.mousemove(function(e) {
+          mousePos.x = e.offsetX;
+          mousePos.y = e.offsetY;
+        });
 
         var intervalId = window.setInterval(function() {
-          var radius = Math.random()*maxRadius,
-              color = Raphael.rgb(Math.random()*255, Math.random()*255, Math.random()*255);
-          var x = Math.random()*(canvasWidth-2*radius)+radius,
-              y = Math.random()*(canvasHeight-2*radius)+radius;
-          var circle = paper.circle(x, y, radius).attr({stroke: color, fill: color});
-          circle.animate({opacity: 0}, duration, "linear", function() { circle.destroy(); });
-        }, interval);
+          var radius = Math.random() * maxRadius;
+          var color = Raphael.rgb(Math.random()*255, Math.random()*255, Math.random()*255);
+          var centerOffset = new Polar(
+            Math.random() * maxDistance,
+            Math.random() * 2*Math.PI
+          ).to_coord();
 
-        document.getElementById("stop").onclick = function(e) {
+          var circle = paper.circle(centerOffset.x+mousePos.x, centerOffset.y+mousePos.y, radius)
+                            .attr({stroke: color, fill: color})
+                            .animate({opacity: 0}, 1000*duration, 'linear', function() {
+                              circle.remove();
+                            });
+        }, 1000*interval);
+
+        $('#stop').click(function(e) {
           window.clearInterval(intervalId);
-        };
+        });
       };
     </script>
   </head>
   <body>
-    <div id="canvas" style="text-align: center;" />
+    <div id="canvas-container" style="text-align: center;" />
     <div>
       <button id="stop">stop</button>
     </div>
