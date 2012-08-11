@@ -9,7 +9,6 @@
     <script type="text/javascript" src="utils.js"></script>
     <script>
       /* TODO
-        -boton start/stop
         -ajuste frecuencia, duracion, radio
         -controles para ajuste dinamico
       */
@@ -27,11 +26,13 @@
 
         circle.animate({opacity: 0}, 1000*cfg.duration, 'linear', function() { circle.remove(); });
 
-        window.setTimeout(function() { animate(paper, cfg); }, 1000*cfg.interval);
+        if (animationSwitch)
+          window.setTimeout(function() { animate(paper, cfg); }, 1000*cfg.interval);
       };
 
       var canvasWidth = 800, canvasHeight = 500;
       var mousePos = new Coord(canvasWidth/2, canvasHeight/2);
+      var animationSwitch = false;
 
       window.onload = function() {
         var cfg = {
@@ -48,11 +49,23 @@
           mousePos.y = e.offsetY;
         });
 
-        animate(paper, cfg);
+        $('#animate').click(function(e) {
+          var $target = $(e.target);
+          console.log($target);
+          if (animationSwitch) {
+            $target.val("start");
+            animationSwitch = false;
+          } else {
+            $target.val("stop");
+            animationSwitch = true;
+            animate(paper, cfg);
+          }
+        });
       };
     </script>
   </head>
   <body>
     <div id="canvas-container" style="text-align: center;" />
+    <input type="button" id="animate" value="start">
   </body>
 </html>
