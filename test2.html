@@ -8,14 +8,21 @@
     <script type="text/javascript" src="raphael-min.js"></script>
     <script type="text/javascript" src="utils.js"></script>
     <script>
+      /* TODO
+        -boton start/stop
+        -ajuste frecuencia, duracion, radio
+        -controles para ajuste dinamico
+      */
       window.onload = function() {
-        var canvasW = 800, canvasH = 500;
-        var maxDistance = Math.min(canvasW, canvasH) / 5;
-        var maxRadius = Math.min(canvasW, canvasH) / 10;
-        var interval = 0.1, duration = 0.5;
+        var canvasWidth = 800, canvasHeight = 500;
+        var cfg = {
+          maxDistance: Math.min(canvasWidth, canvasHeight) / 5,
+          maxRadius:   Math.min(canvasWidth, canvasHeight) / 10,
+          interval: 0.1, duration: 0.5
+        };
 
-        var paper = Raphael('canvas-container', canvasW, canvasH);
-        var mousePos = new Coord(canvasW/2, canvasH/2);
+        var paper = Raphael('canvas-container', canvasWidth, canvasHeight);
+        var mousePos = new Coord(canvasWidth/2, canvasHeight/2);
 
         var $canvas = $(paper.canvas);
         $canvas.css('border', '1px solid black');
@@ -25,19 +32,19 @@
         });
 
         var animate = function() {
-          var radius = Math.random() * maxRadius;
+          var radius = Math.random() * cfg.maxRadius;
           var color = Raphael.rgb(Math.random()*255, Math.random()*255, Math.random()*255);
           var centerOffset = new Polar(
-            Math.random() * maxDistance,
+            Math.random() * cfg.maxDistance,
             Math.random() * 2*Math.PI
           ).to_coord();
 
           var circle = paper.circle(centerOffset.x + mousePos.x, centerOffset.y + mousePos.y, radius)
                             .attr({stroke: color, fill: color});
 
-          circle.animate({opacity: 0}, 1000*duration, 'linear', function() { circle.remove(); });
+          circle.animate({opacity: 0}, 1000*cfg.duration, 'linear', function() { circle.remove(); });
 
-          window.setTimeout(animate, 1000*interval);
+          window.setTimeout(animate, 1000*cfg.interval);
         };
         animate();
       };
