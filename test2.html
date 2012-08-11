@@ -13,8 +13,27 @@
         -ajuste frecuencia, duracion, radio
         -controles para ajuste dinamico
       */
+
+      function animate(paper, cfg) {
+        var radius = Math.random() * cfg.maxRadius;
+        var color = Raphael.rgb(Math.random()*255, Math.random()*255, Math.random()*255);
+        var centerOffset = new Polar(
+          Math.random() * cfg.maxDistance,
+          Math.random() * 2*Math.PI
+        ).to_coord();
+
+        var circle = paper.circle(centerOffset.x + mousePos.x, centerOffset.y + mousePos.y, radius)
+                          .attr({stroke: color, fill: color});
+
+        circle.animate({opacity: 0}, 1000*cfg.duration, 'linear', function() { circle.remove(); });
+
+        window.setTimeout(function() { animate(paper, cfg); }, 1000*cfg.interval);
+      };
+
+      var canvasWidth = 800, canvasHeight = 500;
+      var mousePos = new Coord(canvasWidth/2, canvasHeight/2);
+
       window.onload = function() {
-        var canvasWidth = 800, canvasHeight = 500;
         var cfg = {
           maxDistance: Math.min(canvasWidth, canvasHeight) / 5,
           maxRadius:   Math.min(canvasWidth, canvasHeight) / 10,
@@ -22,8 +41,6 @@
         };
 
         var paper = Raphael('canvas-container', canvasWidth, canvasHeight);
-        var mousePos = new Coord(canvasWidth/2, canvasHeight/2);
-
         var $canvas = $(paper.canvas);
         $canvas.css('border', '1px solid black');
         $canvas.mousemove(function(e) {
@@ -31,22 +48,7 @@
           mousePos.y = e.offsetY;
         });
 
-        var animate = function() {
-          var radius = Math.random() * cfg.maxRadius;
-          var color = Raphael.rgb(Math.random()*255, Math.random()*255, Math.random()*255);
-          var centerOffset = new Polar(
-            Math.random() * cfg.maxDistance,
-            Math.random() * 2*Math.PI
-          ).to_coord();
-
-          var circle = paper.circle(centerOffset.x + mousePos.x, centerOffset.y + mousePos.y, radius)
-                            .attr({stroke: color, fill: color});
-
-          circle.animate({opacity: 0}, 1000*cfg.duration, 'linear', function() { circle.remove(); });
-
-          window.setTimeout(animate, 1000*cfg.interval);
-        };
-        animate();
+        animate(paper, cfg);
       };
     </script>
   </head>
