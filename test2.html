@@ -24,7 +24,7 @@
           mousePos.y = e.offsetY;
         });
 
-        var intervalId = window.setInterval(function() {
+        var animate = function() {
           var radius = Math.random() * maxRadius;
           var color = Raphael.rgb(Math.random()*255, Math.random()*255, Math.random()*255);
           var centerOffset = new Polar(
@@ -32,23 +32,18 @@
             Math.random() * 2*Math.PI
           ).to_coord();
 
-          var circle = paper.circle(centerOffset.x+mousePos.x, centerOffset.y+mousePos.y, radius)
-                            .attr({stroke: color, fill: color})
-                            .animate({opacity: 0}, 1000*duration, 'linear', function() {
-                              circle.remove();
-                            });
-        }, 1000*interval);
+          var circle = paper.circle(centerOffset.x + mousePos.x, centerOffset.y + mousePos.y, radius)
+                            .attr({stroke: color, fill: color});
 
-        $('#stop').click(function(e) {
-          window.clearInterval(intervalId);
-        });
+          circle.animate({opacity: 0}, 1000*duration, 'linear', function() { circle.remove(); });
+
+          window.setTimeout(animate, 1000*interval);
+        };
+        animate();
       };
     </script>
   </head>
   <body>
     <div id="canvas-container" style="text-align: center;" />
-    <div>
-      <button id="stop">stop</button>
-    </div>
   </body>
 </html>
