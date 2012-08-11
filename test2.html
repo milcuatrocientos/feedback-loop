@@ -4,16 +4,19 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta charset="utf-8">
     <title>light pattern</title>
+    <style type="text/css">
+      #canvas-container > svg {
+        float: left;
+      }
+      #animation-controls > label {
+        display: block;
+      }
+    </style>
     <script type="text/javascript" src="jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="raphael-min.js"></script>
     <script type="text/javascript" src="utils.js"></script>
     <script>
-      /* TODO
-        -ajuste frecuencia, duracion, radio
-        -controles para ajuste dinamico
-      */
-
-      function animate(paper, cfg) {
+      function animate(paper) {
         var radius = Math.random() * cfg.maxRadius;
         var color = Raphael.rgb(Math.random()*255, Math.random()*255, Math.random()*255);
         var centerOffset = new Polar(
@@ -27,30 +30,43 @@
         circle.animate({opacity: 0}, 1000*cfg.duration, 'linear', function() { circle.remove(); });
 
         if (animationSwitch)
-          window.setTimeout(function() { animate(paper, cfg); }, 1000*cfg.interval);
+          window.setTimeout(function() { animate(paper); }, 1000*cfg.interval);
       };
 
       var canvasWidth = 800, canvasHeight = 500;
+      var cfg = {
+        maxDistance: Math.min(canvasWidth, canvasHeight) / 5,
+        maxRadius:   Math.min(canvasWidth, canvasHeight) / 10,
+        interval: 0.1, duration: 0.5
+      };
+
       var mousePos = new Coord(canvasWidth/2, canvasHeight/2);
       var animationSwitch = false;
 
       window.onload = function() {
-        var cfg = {
-          maxDistance: Math.min(canvasWidth, canvasHeight) / 5,
-          maxRadius:   Math.min(canvasWidth, canvasHeight) / 10,
-          interval: 0.1, duration: 0.5
-        };
-
         var paper = Raphael('canvas-container', canvasWidth, canvasHeight);
+
         var $canvas = $(paper.canvas);
         $canvas.css('border', '1px solid black');
-        $canvas.mousemove(function(e) {
-          mousePos.x = e.offsetX;
-          mousePos.y = e.offsetY;
+        /*
+        $canvas.mousemove(function(ev) {
+          mousePos.x = ev.offsetX;
+          mousePos.y = ev.offsetY;
+        });
+        */
+
+        $('#animation-controls > label > input').each(function(i, elem) {
+          var cfg_name = elem.id.split('-')[1];
+          $(elem).val(cfg[cfg_name]);
         });
 
-        $('#animate').click(function(e) {
-          var $target = $(e.target);
+        $('#animation-controls > label > input').change(function(ev) {
+          var cfg_name = ev.target.id.split('-')[1];
+          cfg[cfg_name] = $(ev.target).val();
+        });
+
+        $('#animate').click(function(ev) {
+          var $target = $(ev.target);
           console.log($target);
           if (animationSwitch) {
             $target.val("start");
@@ -58,14 +74,21 @@
           } else {
             $target.val("stop");
             animationSwitch = true;
-            animate(paper, cfg);
+            animate(paper);
           }
         });
       };
     </script>
   </head>
   <body>
-    <div id="canvas-container" style="text-align: center;" />
-    <input type="button" id="animate" value="start">
+    <div id="canvas-container"></div>
+    <fieldset id="animation-controls">
+      <legend>animation controls</legend>
+      <label>maxDistance: <input id="cfg-maxDistance" type="number"></label>
+      <label>maxRadius: <input id="cfg-maxRadius" type="number"></label>
+      <label>interval: <input id="cfg-interval" type="number"></label>
+      <label>duration: <input id="cfg-duration" type="number"></label>
+      <input id="animate" type="button" value="start">
+    </fieldset>
   </body>
 </html>
