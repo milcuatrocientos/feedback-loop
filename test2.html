@@ -6,37 +6,9 @@
     <title>light pattern</title>
     <script type="text/javascript" src="jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="raphael-min.js"></script>
+    <script type="text/javascript" src="utils.js"></script>
     <script>
-      function Coord(x, y) {
-        this.to_polar = function() {
-          return new Polar(
-            Math.sqrt(this.x*this.x + this.y*this.y),
-            Math.atan(this.y / this.x)
-          );
-        };
-
-        this.x = x, this.y = y;
-      };
-
-      function Polar(r, a, normalize) {
-        this.to_coord = function() {
-          return new Coord(
-            this.r * Math.cos(this.a),
-            this.r * Math.sin(this.a)
-          );
-        };
-
-        this.normalize = function() {
-          this.a %= 2*Math.PI;
-        };
-
-        this.r = r, this.a = a;
-        if (normalize)
-          this.normalize()
-      };
-
-
-      window.onload = function () {
+      window.onload = function() {
         var canvasW = 800, canvasH = 500;
         var maxDistance = Math.min(canvasW, canvasH) / 5;
         var maxRadius = Math.min(canvasW, canvasH) / 10;
